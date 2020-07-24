@@ -85,4 +85,8 @@ trait SendsPasswordResetEmails
     {
         return Password::broker();
     }
+    public function getTokenResetPasswordGraphQl()
+    {
+        return Password::getTokenResetPasswordGraphQl();
+    }
 }

@@ -18,6 +18,10 @@ trait VerifiesEmails
      */
     public function show(Request $request)
     {
+        if (!$request->user()) {
+            return redirect()->route('login.customer_login');
+        }
+
         return $request->user()->hasVerifiedEmail()
                         ? redirect($this->redirectPath())
                         : view('auth.verify');

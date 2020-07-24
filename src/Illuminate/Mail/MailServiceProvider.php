@@ -5,6 +5,7 @@ namespace Illuminate\Mail;
 use Swift_Mailer;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
+use Illuminate\Http\Request;
 use Swift_DependencyContainer;
 use Illuminate\Support\ServiceProvider;
 
@@ -148,5 +149,23 @@ class MailServiceProvider extends ServiceProvider
         return [
             'mailer', 'swift.mailer', 'swift.transport', Markdown::class,
         ];
+    }
+
+    public function boot(Request $request)
+    {
+        // $host = $request->getHttpHost();
+        // \Log::info('request boot: ' . $host);
+
+        // $path = app_path() . "/Configurations/project_2.json";
+
+        // $flexApplication = \App\FlexApplication::where('domain', $host)->get()->last();
+        // if ($flexApplication) {
+        //     $path = app_path() . "/Configurations/project_" . $flexApplication->id . ".json";
+        // }
+
+        // $json = json_decode(file_get_contents($path), true);
+
+        // $this->app['config']['mail'] = $json['mail'];
+        // \Log::info('request boot: ' . json_encode( $this->app['config']['mail']));
     }
 }

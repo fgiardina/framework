@@ -5,6 +5,8 @@ namespace Illuminate\Auth\Notifications;
 use Illuminate\Support\Facades\Lang;
 use Illuminate\Notifications\Notification;
 use Illuminate\Notifications\Messages\MailMessage;
+use App\Jobs\ProcessMail;
+use App\Events\MailQueue;
 
 class ResetPassword extends Notification
 {
@@ -52,16 +54,21 @@ class ResetPassword extends Notification
      */
     public function toMail($notifiable)
     {
-        if (static::$toMailCallback) {
-            return call_user_func(static::$toMailCallback, $notifiable, $this->token);
-        }
 
-        return (new MailMessage)
-            ->subject(Lang::getFromJson('Reset Password Notification'))
-            ->line(Lang::getFromJson('You are receiving this email because we received a password reset request for your account.'))
-            ->action(Lang::getFromJson('Reset Password'), url(config('app.url').route('password.reset', $this->token, false)))
-            ->line(Lang::getFromJson('This password reset link will expire in :count minutes.', ['count' => config('auth.passwords.users.expire')]))
-            ->line(Lang::getFromJson('If you did not request a password reset, no further action is required.'));
+        \Log::info( '$notifiable->flex_application_id: ' . $notifiable->flex_application_id);
+        \Log::info( '$notifiable->id: ' . $notifiable->id);
+        \Log::info( '$token: ' . $this->token);
+
+
+        $ph = [
+            ['placeholder' => "{#token#}",'value' => $this->token]
+        ];
+
+        ProcessMail::dispatch(
+            new MailQueue( $notifiable->flex_application_id, $notifiable->id,'PASSWORD_CHANGE', $ph)
+        );
+
+        return true;
     }
 
     /**
